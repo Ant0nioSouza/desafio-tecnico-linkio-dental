@@ -1,9 +1,10 @@
 import { OrderModel } from './order.model';
+import { getNextState } from './order.state';
 import { CreateOrderDTO, OrderState } from './order.types';
 
 export class OrderService {
   static async create(data: CreateOrderDTO) {
-    
+
     if (!data.services || data.services.length === 0) {
         throw new Error('At least one service is required to create an order.');
     }
@@ -43,5 +44,19 @@ export class OrderService {
       page,
       limit
     };
+  }
+
+  static async advanceState(orderId: string) {
+    const order = await OrderModel.findById(orderId);
+
+    if (!order) {
+        throw new Error('Order not found');
+    }
+
+    const nextState = getNextState(order.state);
+    order.state = nextState;
+    await order.save();
+
+    return order;
   }
 }

@@ -16,4 +16,10 @@ export class OrderController {
         const result = await OrderService.findAll(page, limit, state);
         return res.status(200).json(result);
     }
+
+    static async advance(req: Request, res: Response) {
+        const { orderId } = req.params;
+        const order = await OrderService.advanceState(orderId);
+        return res.status(200).json(order);
+    }
 }
