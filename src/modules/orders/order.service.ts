@@ -3,6 +3,13 @@ import { CreateOrderDTO, OrderState } from './order.types';
 
 export class OrderService {
   static async create(data: CreateOrderDTO) {
+    
+    if (!data.services || data.services.length === 0) {
+        throw new Error('At least one service is required to create an order.');
+    }
+
+    const totalValue = data.services.reduce((sum, service) => sum + service.value, 0);
+
     const order = await OrderModel.create(data);
     return order;
   }
